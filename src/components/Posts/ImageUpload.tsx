@@ -1,4 +1,3 @@
-// src/components/Posts/ImageUpload.tsx
 import { Box, Button, Grid, IconButton, Typography } from '@mui/material';
 import { AddAPhoto, Delete } from '@mui/icons-material';
 import { ChangeEvent, useCallback } from 'react';

@@ -3,8 +3,43 @@ import { useQuery } from 'react-query';
 import { getCurrentUser } from '../../api/authService';
 import PostList from '../../components/Posts/PostList';
 
+interface UserProfile {
+  id: number;
+  username: string;
+  email: string;
+  profilePictureUrl: string;
+  posts: Array<{
+    id: number;
+    title: string;
+    description: string;
+    authorUsername: string;
+    authorProfilePicture: string;
+    mediaUrls: string[];
+    createdAt: string;
+  }>;
+}
+
 const ProfilePage = () => {
-  const { data: user, isLoading } = useQuery('currentUser', getCurrentUser);
+  const { data: user, isLoading } = useQuery('currentUser', getCurrentUser, {
+    select: (response) => {
+      // Transform the API response to match our UserProfile interface
+      return {
+        id: response.data.id,
+        username: response.data.username || 'Unknown',
+        email: response.data.email || '',
+        profilePictureUrl: response.data.profilePictureUrl || '',
+        posts: response.data.posts?.map((post: any) => ({
+          id: post.id,
+          title: post.title,
+          description: post.description,
+          authorUsername: post.user?.username || 'Unknown',
+          authorProfilePicture: post.user?.profilePictureUrl || '',
+          mediaUrls: post.media?.map((m: any) => m.mediaUrl) || [],
+          createdAt: post.createdAt
+        })) || []
+      } as UserProfile;
+    }
+  });
 
   if (isLoading) return <CircularProgress />;
 
